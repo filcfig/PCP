@@ -1,0 +1,236 @@
+SAMPLES, = glob_wildcards("sequencing/trimmed_sortedreads/{sample}.sorted.rtn.bam")
+
+rule all:
+	input:
+		expand("sequencing/merged/{sample}.merged.rtn_before.bam", sample=SAMPLES)
+
+ruleorder: move_after_rtn_bam > move_after_rtn_bai > move_firstclean_bam > move_firstclean_bai > cp_secondclean_bam > cp_secondclean_bai > pycision_firstclean > pycision_secondclean > move_firstclean > rename_secondclean > bam2fastq > bwa_mem2 > samtools_sort2 > samtools_index2 > pycision_thirdclean > move_thirdclean > samtools_bam2sam_exceptfirst > samtools_bam2sam_mt162corrected > change_length_exceptfirst > change_length_mt162corrected > sam2bam_exceptfirst > sam2bam_mt162corrected > samtools_sort_exceptfirst > samtools_sort_mt162corrected > samtools_index_exceptfirst > samtools_index_mt162corrected > merge
+
+rule move_after_rtn_bam:
+	input:
+		"sequencing/trimmed_sortedreads/{sample}.sorted.rtn.bam"
+	output:
+		protected("sequencing/after_rtn/{sample}.sorted.rtn.bam")
+	shell:
+		"mv {input} {output}"
+		
+rule move_after_rtn_bai:
+	input:
+		"sequencing/trimmed_sortedreads/{sample}.sorted.rtn.bam.bai"
+	output:
+		protected("sequencing/after_rtn/{sample}.sorted.rtn.bam.bai")
+	shell:
+		"mv {input} {output}"
+
+rule move_firstclean_bam:
+	input:
+		"sequencing/after_rtn/{sample}.sorted.rtn.bam"
+	output:
+		temp("sequencing/pycision_firstclean/{sample}.exceptfirst_uncut.sorted.bam")
+	shell:
+		"cp {input} {output}"
+		
+rule move_firstclean_bai:
+	input:
+		"sequencing/after_rtn/{sample}.sorted.rtn.bam.bai"
+	output:
+		temp("sequencing/pycision_firstclean/{sample}.exceptfirst_uncut.sorted.bam.bai")
+	shell:
+		"cp {input} {output}"
+		
+rule cp_secondclean_bam:
+	input:
+		"sequencing/after_rtn/{sample}.sorted.rtn.bam"
+	output:
+		temp("sequencing/pycision_secondclean/{sample}.justmt162_uncut.sorted.bam")
+	shell:
+		"cp {input} {output}"
+		
+rule cp_secondclean_bai:
+	input:
+		"sequencing/after_rtn/{sample}.sorted.rtn.bam.bai"
+	output:
+		temp("sequencing/pycision_secondclean/{sample}.justmt162_uncut.sorted.bam.bai")
+	shell:
+		"cp {input} {output}"
+		
+rule pycision_firstclean:
+	input:
+		bam=rules.move_firstclean_bam.output,
+		bai=rules.move_firstclean_bai.output
+	output:
+		bam=temp("sequencing/pycision_firstclean/{sample}.exceptfirst_uncut.sorted.softClipped.halfway.bam"),
+		sorted_bam=temp("sequencing/pycision_firstclean/{sample}.exceptfirst_uncut.sorted.softClipped.halfway.sorted.bam"),
+		bai=temp("sequencing/pycision_firstclean/{sample}.exceptfirst_uncut.sorted.softClipped.halfway.sorted.bam.bai")
+	shell:
+		"python3 pycision.py -q 4 -f sequencing/1_exceptfirst.bed {input.bam}"
+		
+rule pycision_secondclean:
+	input:
+		bam=rules.cp_secondclean_bam.output,
+		bai=rules.cp_secondclean_bai.output
+	output:
+		bam=temp("sequencing/pycision_secondclean/{sample}.justmt162_uncut.sorted.softClipped.halfway.bam"),
+		sorted_bam=temp("sequencing/pycision_secondclean/{sample}.justmt162_uncut.sorted.softClipped.halfway.sorted.bam"),
+		bai=temp("sequencing/pycision_secondclean/{sample}.justmt162_uncut.sorted.softClipped.halfway.sorted.bam.bai")
+	shell:
+		"python3 pycision.py -q 4 -f sequencing/2_wholemt162.bed {input.bam}"		
+
+rule move_firstclean:
+	input:
+		rules.pycision_firstclean.output.bam
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.exceptfirst_cut.bam")
+	shell:
+		"mv {input} {output}"
+		
+rule rename_secondclean:
+	input:
+		rules.pycision_secondclean.output.bam
+	output:
+		temp("sequencing/pycision_secondclean/{sample}.justmt162_cut.bam")
+	shell:
+		"mv {input} {output}"
+		
+rule bam2fastq:
+	input:
+		rules.rename_secondclean.output
+	output:
+		temp("sequencing/pycision_secondclean/{sample}.justmt162_cut.fq")
+	shell:
+		"bedtools bamtofastq -i {input} -fq {output}"
+
+rule bwa_mem2:
+	input:
+		fa="sequencing/referencemtDNA_chrM_exceptlast.fasta",
+		fastq=rules.bam2fastq.output
+	output:
+		temp("sequencing/pycision_secondclean/{sample}.justmt162_realigned.bam")
+	shell:
+		"bwa mem {input.fa} {input.fastq} | samtools view -hSb - > {output}"
+		
+rule samtools_sort2:
+	input:
+		rules.bwa_mem2.output
+	output:
+		temp("sequencing/pycision_secondclean/{sample}.justmt162_realigned.sorted.bam")
+	shell:
+		"samtools sort {input} -o {output}"
+		
+rule samtools_index2:
+	input:
+		rules.samtools_sort2.output
+	output:
+		temp("sequencing/pycision_secondclean/{sample}.justmt162_realigned.sorted.bam.bai")
+	shell:
+		"samtools index {input}"
+		
+rule pycision_thirdclean:
+	input:
+		bam=rules.samtools_sort2.output,
+		bai=rules.samtools_index2.output
+	output:
+		bam=temp("sequencing/pycision_secondclean/{sample}.justmt162_realigned.sorted.softClipped.halfway.bam"),
+		sorted_bam=temp("sequencing/pycision_secondclean/{sample}.justmt162_realigned.sorted.softClipped.halfway.sorted.bam"),
+		bai=temp("sequencing/pycision_secondclean/{sample}.justmt162_realigned.sorted.softClipped.halfway.sorted.bam.bai")
+	shell:
+		"python3 pycision.py -q 4 -f sequencing/3_firstonly.bed {input.bam}"
+		
+rule move_thirdclean:
+	input:
+		rules.pycision_thirdclean.output.bam
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.mt162corrected.bam")
+	shell:
+		"mv {input} {output}"
+
+rule samtools_bam2sam_exceptfirst:
+	input:
+		rules.move_firstclean.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.exceptfirst_cut.sam")
+	shell:
+		"samtools view -h {input} > {output}"
+	
+rule samtools_bam2sam_mt162corrected:
+	input:
+		rules.move_thirdclean.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.mt162corrected.sam")
+	shell:
+		"samtools view -h {input} > {output}"
+	
+rule change_length_exceptfirst:
+	input:
+		rules.samtools_bam2sam_exceptfirst.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.exceptfirst_correctedlength.sam")
+	shell:
+		"""awk '{{ gsub("LN:16649", "LN:16569"); print }}' {input} > {output}"""
+	
+rule change_length_mt162corrected:
+	input:
+		rules.samtools_bam2sam_mt162corrected.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.mt162corrected_correctedlength.sam")
+	shell:
+		"""awk '{{ gsub("LN:16541", "LN:16569"); print }}' {input} > {output}"""
+	
+rule sam2bam_exceptfirst:
+	input:
+		rules.change_length_exceptfirst.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.exceptfirst_correctedlength.bam")
+	shell:
+		"samtools view -h -S -b -o {output} {input}"
+	
+rule sam2bam_mt162corrected:
+	input:
+		rules.change_length_mt162corrected.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.mt162corrected_correctedlength.bam")
+	shell:
+		"samtools view -h -S -b -o {output} {input}"
+	
+rule samtools_sort_exceptfirst:
+	input:
+		rules.sam2bam_exceptfirst.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.exceptfirst_correctedlength.sorted.bam")
+	shell:
+		"samtools sort {input} -o {output}"
+		
+rule samtools_sort_mt162corrected:
+	input:
+		rules.sam2bam_mt162corrected.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.mt162corrected_correctedlength.sorted.bam")
+	shell:
+		"samtools sort {input} -o {output}"
+		
+rule samtools_index_exceptfirst:
+	input:
+		rules.samtools_sort_exceptfirst.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.exceptfirst_correctedlength.sorted.bam.bai")
+	shell:
+		"samtools index {input}"
+		
+rule samtools_index_mt162corrected:
+	input:
+		rules.samtools_sort_mt162corrected.output
+	output:
+		temp("sequencing/pycision_to_merge/{sample}.mt162corrected_correctedlength.sorted.bam.bai")
+	shell:
+		"samtools index {input}"
+
+rule merge:
+	input:
+		exceptfirst_bam=rules.samtools_sort_exceptfirst.output,
+		exceptfirst_bai=rules.samtools_index_exceptfirst.output,
+		mt162_bam=rules.samtools_sort_mt162corrected.output,
+		mt162_bai=rules.samtools_index_mt162corrected.output
+	output:
+		protected("sequencing/merged/{sample}.merged.rtn_before.bam")
+	shell:
+		"samtools merge {output} {input.mt162_bam} {input.exceptfirst_bam}"
