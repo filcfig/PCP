@@ -21,7 +21,7 @@ Install the software above and clone this repo to your directory of choice (we u
 git clone https://github.com/filcfig/PCP.git
 ```
 
-Add the [`pycision.py`](https://github.com/Ahhgust/Pycision) file to the directory you have chosen to host the executable files in this repo. Add [`trimmomatic-0.39.jar`](https://github.com/usadellab/Trimmomatic) and clone [`RtN`](https://github.com/Ahhgust/RtN) to the `sequencing` folder.
+Add the [`pycision.py`](https://github.com/Ahhgust/Pycision) file to the directory you have chosen to host the executable files in this repo. Add [`trimmomatic-0.39.jar`](https://github.com/usadellab/Trimmomatic) and clone [`RtN`](https://github.com/Ahhgust/RtN) to the `sequencing` folder. If you don't use `~/Documents/` as a base directory, please adjust the file `run_FASTQ.sh` accordingly.
 
 ## Usage
 
