@@ -39,7 +39,7 @@ snakemake -s Snakefile_noRtN -j
 The final BAM files will be available at the `sequencing/merged` folder.
 
 ## Data
-The data generated with samples previously sequenced within the 1000 Genome Project are openly available in [Zenodo](https://zenodo.org/) at doi:10.5281/zenodo.5524539.
+The data generated with samples previously sequenced within the 1000 Genome Project are openly available in [Zenodo](https://doi.org/10.5281/zenodo.5524539).
 
 ## Citation
 Our manuscript is currently submitted to an open-source journal:
