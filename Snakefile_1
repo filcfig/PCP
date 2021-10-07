@@ -13,7 +13,7 @@ rule trim:
 		fastq="sequencing/trimmed_fastqfiles/{sample}.trimmed.fastq",
 		logfile="sequencing/trimmed_fastqfiles/{sample}_logfile"
 	shell:
-		"java -jar sequencing/trimmomatic-0.39.jar SE -phred33 -trimlog {output.logfile} {input} {output.fastq} SLIDINGWINDOW:5:17.5 CROP:160 MINLEN:35"
+		"java -jar tools/trimmomatic-0.39.jar SE -phred33 -trimlog {output.logfile} {input} {output.fastq} SLIDINGWINDOW:5:17.5 CROP:160 MINLEN:35"
 		
 rule bwa_mem:
 	input:

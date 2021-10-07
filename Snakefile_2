@@ -63,7 +63,7 @@ rule pycision_firstclean:
 		sorted_bam=temp("sequencing/pycision_firstclean/{sample}.exceptfirst_uncut.sorted.softClipped.halfway.sorted.bam"),
 		bai=temp("sequencing/pycision_firstclean/{sample}.exceptfirst_uncut.sorted.softClipped.halfway.sorted.bam.bai")
 	shell:
-		"python3 pycision.py -q 4 -f sequencing/1_exceptfirst.bed {input.bam}"
+		"python3 tools/pycision.py -q 4 -f sequencing/1_exceptfirst.bed {input.bam}"
 		
 rule pycision_secondclean:
 	input:
@@ -74,7 +74,7 @@ rule pycision_secondclean:
 		sorted_bam=temp("sequencing/pycision_secondclean/{sample}.justmt162_uncut.sorted.softClipped.halfway.sorted.bam"),
 		bai=temp("sequencing/pycision_secondclean/{sample}.justmt162_uncut.sorted.softClipped.halfway.sorted.bam.bai")
 	shell:
-		"python3 pycision.py -q 4 -f sequencing/2_wholemt162.bed {input.bam}"		
+		"python3 tools/pycision.py -q 4 -f sequencing/2_wholemt162.bed {input.bam}"		
 
 rule move_firstclean:
 	input:
@@ -134,7 +134,7 @@ rule pycision_thirdclean:
 		sorted_bam=temp("sequencing/pycision_secondclean/{sample}.justmt162_realigned.sorted.softClipped.halfway.sorted.bam"),
 		bai=temp("sequencing/pycision_secondclean/{sample}.justmt162_realigned.sorted.softClipped.halfway.sorted.bam.bai")
 	shell:
-		"python3 pycision.py -q 4 -f sequencing/3_firstonly.bed {input.bam}"
+		"python3 tools/pycision.py -q 4 -f sequencing/3_firstonly.bed {input.bam}"
 		
 rule move_thirdclean:
 	input:
