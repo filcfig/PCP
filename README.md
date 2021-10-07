@@ -15,24 +15,25 @@ We use a workflow based on [Snakemake](https://snakemake.readthedocs.io/en/stabl
 
 ## Installation
 
-Install the software above and clone this repo to your directory of choice (we used `~/Documents/`): 
+Install the software above and clone this repo to your directory of choice: 
 
 ```bash
 git clone https://github.com/filcfig/PCP.git
 ```
 
-Add the [`pycision.py`](https://github.com/Ahhgust/Pycision) file to the directory you have chosen to host the executable files in this repo. Add [`trimmomatic-0.39.jar`](https://github.com/usadellab/Trimmomatic) and clone [`RtN`](https://github.com/Ahhgust/RtN) to the `sequencing` folder. If you don't use `~/Documents/` as a base directory, please adjust the file `run_FASTQ.sh` accordingly.
+Add [`pycision.py`](https://github.com/Ahhgust/Pycision), [`trimmomatic-0.39.jar`](https://github.com/usadellab/Trimmomatic), and the [`RtN`](https://github.com/Ahhgust/RtN) folder (don't forget to perform `bunzip2 humans.fa.bz2 && bwa index humans.fa`) to the `tools` folder.
 
 ## Usage
 
-Start by adding the FASTQ files to the `sequencing/selected_fastqfiles` folder. Then, make `run_FASTQ.sh` executable and run it (make sure [Snakemake](https://snakemake.readthedocs.io/en/stable/) is activated):
+Start by adding the FASTQ files to the `sequencing/selected_fastqfiles` folder. Then, make `run_FASTQ.sh` executable and run it (make sure [Snakemake](https://snakemake.readthedocs.io/en/stable/) is activated - if you use [`conda`](https://docs.conda.io/en/latest/), type `conda activate snakemake`):
 
 ```bash
 chmod +x run_FASTQ.sh
 ./run_FASTQ.sh
 ```
 
-If you wish to run FASTQ files **without** `RtN`, run `Snakefile_noRtN` instead:
+Since running RtN requires some time per sample and a [good amount of RAM](https://github.com/Ahhgust/RtN/issues/1), it is possible to run FASTQ files **without** `RtN`, by running `Snakefile_noRtN` instead:
+
 ```bash
 snakemake -s Snakefile_noRtN -j
 ```
