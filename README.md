@@ -43,9 +43,8 @@ The final BAM files will be available at the `sequencing/merged` folder.
 The data generated with samples previously sequenced within the 1000 Genomes Project are openly available in [Zenodo](https://doi.org/10.5281/zenodo.5524539).
 
 ## Citation
-Our manuscript is currently submitted to an open-source journal:
-
-Cortes-Figueiredo, F.; Carvalho, F.S.; Fonseca, A.C.; Paul, F.; Ferro, J.M.; Schönherr, S.; Weissensteiner, H.; Morais, V.A.. From forensics to clinical research: expanding the variant calling pipeline for the Precision ID mtDNA Whole Genome Panel (submitted).
+Our manuscript is published at:
+Cortes-Figueiredo, F.; Carvalho, F.S.; Fonseca, A.C.; Paul, F.; Ferro, J.M.; Schönherr, S.; Weissensteiner, H.; Morais, V.A. From Forensics to Clinical Research: Expanding the Variant Calling Pipeline for the Precision ID mtDNA Whole Genome Panel. Int. J. Mol. Sci. 2021, 22, 12031. [https://doi.org/10.3390/ijms222112031](https://doi.org/10.3390/ijms222112031).
 
 ## License
 Distributed under the [`MIT License`](https://choosealicense.com/licenses/mit/). See [LICENSE](/LICENSE) for more information.
