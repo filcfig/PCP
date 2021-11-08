@@ -44,7 +44,8 @@ The data generated with samples previously sequenced within the 1000 Genomes Pro
 
 ## Citation
 Our manuscript is published at:
-Cortes-Figueiredo, F.; Carvalho, F.S.; Fonseca, A.C.; Paul, F.; Ferro, J.M.; Schönherr, S.; Weissensteiner, H.; Morais, V.A. From Forensics to Clinical Research: Expanding the Variant Calling Pipeline for the Precision ID mtDNA Whole Genome Panel. Int. J. Mol. Sci. 2021, 22, 12031. [https://doi.org/10.3390/ijms222112031](https://doi.org/10.3390/ijms222112031).
+
+Cortes-Figueiredo, F.; Carvalho, F.S.; Fonseca, A.C.; Paul, F.; Ferro, J.M.; Schönherr, S.; Weissensteiner, H.; Morais, V.A. From Forensics to Clinical Research: Expanding the Variant Calling Pipeline for the Precision ID mtDNA Whole Genome Panel. *Int. J. Mol. Sci.* **2021**, *22*, 12031. [https://doi.org/10.3390/ijms222112031](https://doi.org/10.3390/ijms222112031).
 
 ## License
 Distributed under the [`MIT License`](https://choosealicense.com/licenses/mit/). See [LICENSE](/LICENSE) for more information.
